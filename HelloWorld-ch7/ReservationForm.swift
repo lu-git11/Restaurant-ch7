@@ -17,6 +17,7 @@ struct ReservationForm: View {
     @State private var phoneNumber = ""
     @State private var previewText = ""
     @State private var childrenCount = 0
+    @State private var childrenNames = ""
     @State private var occasion = ""
     
     var body: some View {
@@ -30,21 +31,45 @@ struct ReservationForm: View {
                     .foregroundStyle(.secondary)
             }
             
-            Section(header: Text("Reservation Details")){
-                //$ means cab write and read
+            Section("Reservation Details"){
+                //$ means can write and read
                 TextField("Name",text:$userName)
                     .textInputAutocapitalization(.words)
                     .autocorrectionDisabled(true)
-                Stepper("Guests: \(guestCount)",value:$guestCount, in: 1...maxGuest)
-            }
-            
-            Section(header: Text("Contact")){
+                
+                if userName.isEmpty {
+                    Text("Plesase insert name")
+                        .font(.footnote)
+                        .foregroundColor(.yellow)
+                }
+                
+                Stepper(value:$guestCount, in: 1...maxGuest){
+                    HStack {
+                        Text("Guests: \(guestCount)")
+                        
+                        if guestCount >= 8 {
+                            Text("Please call ahead")
+                                .font(.callout)
+                                .foregroundColor(.orange)
+                                .minimumScaleFactor(0.8)
+                                .lineLimit(1)
+                            }
+                        }
+                    }
+                }
+            Section("Contact"){
                 TextField("Phone", text:$phoneNumber)
                     .keyboardType(.numberPad)
             }
             
-            Section(header: Text("Optional")){
+            Section("Optional"){
                 Stepper("# of Children: \(childrenCount)",value:$childrenCount, in: 0...5)
+                
+                if childrenCount > 0 {
+                    TextField("Please enter names of children", text:$childrenNames)
+                        .autocorrectionDisabled(true)
+                        .textInputAutocapitalization(.words)
+                }
                 
                 TextField("Occasion (Birthday, Anniversary, etc.)",text:$occasion)
             }
@@ -59,6 +84,7 @@ struct ReservationForm: View {
                     Occasion: \(occasion)
                     """
                 }
+                .disabled(userName.isEmpty)
             
             Section(header: Text("Preview")){
                 Text(previewText)
