@@ -18,7 +18,21 @@ struct ReservationForm: View {
     @State private var previewText = ""
     @State private var childrenCount = 0
     @State private var childrenNames = ""
+    @State private var outdoorSeating = false
     @State private var occasion = ""
+    @State private var estimate = ""
+    
+    // labels for guests
+    func guestLabel(_ count:Int) -> String{
+        count == 1 ? "Guest" : "Guests"
+    }
+    
+    func estimateTotal(adults: Int, children: Int) -> Double{
+        let adultPrice = 15.0
+        let childrenPrice = 9.0
+        
+        return Double(adults) * adultPrice + Double(children) * childrenPrice
+    }
     
     var body: some View {
         Form{
@@ -53,10 +67,10 @@ struct ReservationForm: View {
                                 .foregroundColor(.orange)
                                 .minimumScaleFactor(0.8)
                                 .lineLimit(1)
-                            }
                         }
                     }
                 }
+            }
             Section("Contact"){
                 TextField("Phone", text:$phoneNumber)
                     .keyboardType(.numberPad)
@@ -71,28 +85,80 @@ struct ReservationForm: View {
                         .textInputAutocapitalization(.words)
                 }
                 
+                Toggle(isOn:$outdoorSeating) {
+                    HStack {
+                        Text("Outdoor Seating")
+                        
+                        if outdoorSeating {
+                            Text("Rain or Shine")
+                                .font(.callout)
+                                .foregroundColor(.orange)
+                        }
+                    }
+                }
+                
                 TextField("Occasion (Birthday, Anniversary, etc.)",text:$occasion)
             }
             
             Button("Preview reservation"){
-                    previewText =
+                previewText =
                     """
                     Name: \(userName)
-                    Guests: \(guestCount)
+                    \(guestLabel(guestCount)): \(guestCount)
                     Phone: \(phoneNumber)
                     Children: \(childrenCount)
+                    Outdoor Seating: \(outdoorSeating ? "Yes" : "No")
                     Occasion: \(occasion)
                     """
-                }
-                .disabled(userName.isEmpty)
+            }
+            .disabled(userName.isEmpty)
             
-            Section(header: Text("Preview")){
-                Text(previewText)
-                    .font(.footnote)
+            Section("Preview"){
+                VStack(spacing: 1){
+                    Text(previewText)
+                        .font(.footnote)
                 }
+            }
+            
+            Section("Summary"){
+                VStack(spacing: 3){
+                    HStack{
+                            Text("Reservation Summary")
+                            Spacer()
+                            Image(systemName: "doc.text.magnifyingglass")
+                        }
+                    HStack{
+                            Text("Name")
+                            Spacer()
+                            Text(userName)
+                        }
+                    HStack{
+                            Text("Adults:")
+                            Spacer()
+                            Text("\(guestCount)")
+                        }
+                    HStack{
+                            Text("Children:")
+                            Spacer()
+                            Text("\(childrenCount)")
+                        }
+                    HStack{
+                            Text("Estimated Total:")
+                            Spacer()
+                            Text("$\(estimateTotal(adults:guestCount, children:childrenCount),specifier:"%.2f")")
+                        }
+                    
+                }
+                .padding(8)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color.gray.opacity(0.15))
+                )
+                .padding(.vertical, 4)
             }
         }
     }
+}
     
 
 
