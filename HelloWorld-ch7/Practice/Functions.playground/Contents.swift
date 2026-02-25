@@ -17,7 +17,7 @@ let message = greet(person: "Jeff")
 print(message)
 
 
-// example 2 - 2 parameters
+// example 2 - 2 parameters       output
 func add(number1: Int, number2: Int) -> Int{
     return number1 + number2
 }
