@@ -9,50 +9,27 @@ import SwiftUI
 
 struct DessertView: View {
     
-    @State private var showDessertSheet:Bool = false
+    @State private var showDesserts:Bool = false
     
-    let dessertItems = [
+    let dessertItems:[String:Double] = [
         "Cake 🍰":9.99,
         "Ice Cream 🍦":4.99,
         "Pie 🥧":7.99,
     ]
+    
+    var sortedMenu:[(name:String, price:Double)] {
+        dessertItems
+            .sorted { $0.value < $1.value }
+            .map { (name: $0.key, price: $0.value)}
+    }
     
     func getTotalDessert() -> Int{
         dessertItems.count
     }
     
     
-    
-    
-    var body: some View {
-        
-        Button("View Desserts"){
-            withAnimation{
-                showDessertSheet = true
-            }
-        }
-        .font(.system(size: 18, weight: .semibold))
-        .foregroundColor(.white)
-        .padding(.horizontal,16)
-        .padding(.vertical,10)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.accentColor))
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.white.opacity(0.6), lineWidth: 1))
-        .shadow(color: .black.opacity(0.12), radius: 8, x: 0, y: 4)
-        .sheet(isPresented: $showDessertSheet){
-            DessertSheetView(dessertItems: dessertItems)
-        }
-    }
-}
-
-struct DessertSheetView: View{
-    let dessertItems: [String: Double]
-    
     var body: some View{
-        let sortedDessert = dessertItems.sorted { $0.key < $1.key }
+        let sortedDessert = dessertItems.sorted { $0.value < $1.value }
         
         NavigationStack{
                 List{
@@ -60,6 +37,13 @@ struct DessertSheetView: View{
                         HStack{
                             Text(name)
                             Spacer()
+                            HStack{
+                                if price > 5{
+                                    PremiumBadge()
+                                }else{
+                                    RegularBadge()
+                                }
+                            }
                             Text("\(price,specifier:"%.2f")")
                         }
                     }

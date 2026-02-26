@@ -21,9 +21,10 @@
 import SwiftUI
 
 struct MenuView: View {
-    @State private var showDessertSheet = false
+    @State private var showDesserts = false
+    @State private var cheapMenu = false
     
-    let menuItems = [
+    let menuItems:[String:Double] = [
         "Steak":25.99,
         "Chicken":22.99,
         "Fish":32.55,
@@ -34,20 +35,24 @@ struct MenuView: View {
         "Eggplant":15.99,
     ]
     
-    let dessertItems = [
-        "Cake 🍰":9.99,
-        "Ice Cream 🍦":4.99,
-        "Pie 🥧":7.99,
-    ]
     
     func getTotalItems() -> Int{
-        menuItems.count
+        displayMenu.count
     }
     
     var sortedMenu:[(name:String, price:Double)] {
         menuItems
             .sorted { $0.key < $1.key }
             .map { (name: $0.key, price: $0.value)}
+    }
+    
+    //computed property
+    var displayMenu:[(name:String, price:Double)]{
+        if cheapMenu {
+            return sortedMenu.filter { $0.price < 10 }
+        } else {
+            return sortedMenu
+        }
     }
     
   /*  func getHighestPrice () -> Double {
@@ -61,26 +66,34 @@ struct MenuView: View {
     }
    */
     
-    var body: some View {
-        
-        let sortedMenu1 = menuItems.sorted {
-            $0.key < $1.key
-        }
-        
+    var body: some View {        
         VStack{
             VStack{
-                Image("images")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 110)
                 
-                Text("Today's Menu")
-                    .font(.title2)
-                    .bold()
+                HStack{
+                    Image(systemName:"tree.fill")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 50)
+                        .padding(7)
+                    
+                    Text("Today's Menu")
+                        .font(.title)
+                        .bold()
+                    
+                    Image("images")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 50)
+                        .padding(7)
+                }
+                Toggle("Show affordable menu",isOn:$cheapMenu)
+                    .padding(8)
+                    .padding(.horizontal,15)
                 
                 Button("View Desserts"){
                     withAnimation{
-                        showDessertSheet = true
+                        showDesserts = true
                     }
                 }
                 .font(.system(size: 18, weight: .semibold))
@@ -94,27 +107,19 @@ struct MenuView: View {
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(Color.white.opacity(0.6), lineWidth: 1))
                 .shadow(color: .black.opacity(0.12), radius: 8, x: 0, y: 4)
-                .sheet(isPresented: $showDessertSheet){
-                    DessertSheetView(dessertItems: dessertItems)
+                .sheet(isPresented: $showDesserts){
+                    DessertView()
                 }
-                
             }
             
             List{
-                ForEach(sortedMenu1, id:\.key){
-                    name, price in
-                    
-                    HStack{
-                        Text(name)
-                        Spacer()
-                        Text("\(price,specifier:"%.2f")")
-                    }
-                }
+                ForEach(displayMenu, id:\.name){ item in
+                    MenuItemRowView(name: item.name, price: item.price )}
             }
             
             Section{
                 List{
-                    ForEach(sortedMenu, id: \.name) { item in
+                    ForEach(displayMenu, id: \.name) { item in
                         HStack{
                             Text(item.name)
                             Spacer()
