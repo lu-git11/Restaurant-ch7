@@ -35,17 +35,19 @@ struct ReservationForm: View {
     }
     
     var body: some View {
+        VStack{
+            Image(systemName:"calendar")
+                .font(.system(size:50))
+                .foregroundColor(.yellow)
+            Text("Little Lemon")
+                .font(.title)
+                .fontWeight(.bold)
+            Text("Welcome Home")
+                .font(.subheadline)
+        }
+        
         Form{
-            //header
-            Section{
-                Text(restaurantName)
-                    .font(.title3)
-                    .bold()
-                Text("Reservation Form")
-                    .foregroundStyle(.secondary)
-            }
-            
-            Section("Reservation Details"){
+            Section("Guests"){
                 //$ means can write and read
                 TextField("Name",text:$userName)
                     .textInputAutocapitalization(.words)
@@ -157,6 +159,7 @@ struct ReservationForm: View {
                 .padding(.vertical, 4)
             }
         }
+        .navigationTitle("Reservation Details")
     }
 }
     

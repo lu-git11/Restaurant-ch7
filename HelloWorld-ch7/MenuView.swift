@@ -66,27 +66,41 @@ struct MenuView: View {
     }
    */
     
-    var body: some View {        
+    var body: some View {
+        VStack{
+            Image(systemName:"fork.knife.circle.fill")
+                .font(.system(size:50))
+                .foregroundColor(.yellow)
+            Text("Little Lemon")
+                .font(.title)
+                .fontWeight(.bold)
+            Text("Welcome Home")
+                .font(.subheadline)
+        }
         VStack{
             VStack{
-                
-                HStack{
+                HStack(spacing: 16){
                     Image(systemName:"tree.fill")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 50)
-                        .padding(7)
+                        .clipShape(Circle())
+                        .frame(width: 44, height: 44)
+                        .background(.thickMaterial)
                     
                     Text("Today's Menu")
-                        .font(.title)
-                        .bold()
-                    
+                        .font(.largeTitle.bold())
+                        .foregroundStyle(.primary)
+                        
                     Image("images")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 50)
-                        .padding(7)
+                        .frame(width: 44, height: 44)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
+                .padding()
+                .background(.regularMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 18))
+                
                 Toggle("Show affordable menu",isOn:$cheapMenu)
                     .padding(8)
                     .padding(.horizontal,15)
@@ -114,25 +128,13 @@ struct MenuView: View {
             
             List{
                 ForEach(displayMenu, id:\.name){ item in
-                    MenuItemRowView(name: item.name, price: item.price )}
-            }
-            
-            Section{
-                List{
-                    ForEach(displayMenu, id: \.name) { item in
-                        HStack{
-                            Text(item.name)
-                            Spacer()
-                            Text(String(format: "%.2f", item.price))
-                        }
-                    }
+                    MenuItemRowView(name: item.name, price: item.price)
                 }
             }
             
-        
             Section{
                 VStack{
-                    Text("Total items: \(getTotalItems())") //string interpolation
+                    Text("Total items: \(getTotalItems())")//string interpolation
                 }
             }
         }
@@ -142,3 +144,4 @@ struct MenuView: View {
 #Preview {
     MenuView()
 }
+

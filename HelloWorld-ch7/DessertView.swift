@@ -27,24 +27,23 @@ struct DessertView: View {
         dessertItems.count
     }
     
-    
     var body: some View{
-        let sortedDessert = dessertItems.sorted { $0.value < $1.value }
+        
         
         NavigationStack{
                 List{
-                    ForEach(sortedDessert, id:\.key){ name,price in
+                    ForEach(sortedMenu, id:\.name){ item in
                         HStack{
-                            Text(name)
+                            Text(item.name)
                             Spacer()
                             HStack{
-                                if price > 5{
+                                if item.price > 5{
                                     PremiumBadge()
                                 }else{
                                     RegularBadge()
                                 }
+                                Text("\(item.price,specifier:"%.2f")")
                             }
-                            Text("\(price,specifier:"%.2f")")
                         }
                     }
                 }
